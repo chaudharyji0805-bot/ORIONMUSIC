@@ -1,15 +1,13 @@
 aiofiles
 aiohttp
 apscheduler
-asyncio
-bs4
+beautifulsoup4
 ffmpeg-python
-future>=1.0.0
 gitpython
 heroku3
 httpx>=0.28.1
 motor
-pillow>=12.0.0
+pillow>=10.0.0
 psutil
 kurigram>=2.2.14
 python-dotenv
@@ -22,4 +20,4 @@ spotipy
 pytgcrypto
 unidecode
 yt-dlp[default]==2025.12.8
-git+https://github.com/CertifiedCoders/youtube-search-python
+youtube-search-python==1.6.6
