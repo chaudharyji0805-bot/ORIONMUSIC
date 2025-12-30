@@ -11,7 +11,7 @@ psutil
 kurigram>=2.2.14
 python-dotenv
 pyrogram==2.0.106
-pytgcalls==2.2.6
+pytgcalls==2.1.0
 ntgcalls==2.0.6
 httpx==0.23.3
 pyyaml>=6.0.3
