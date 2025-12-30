@@ -21,12 +21,12 @@ async def show_repo(_, msg):
     buttons = [
         [InlineKeyboardButton("➕ ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ ✨", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
         [
-            InlineKeyboardButton("👑 ᴏᴡɴᴇʀ", url="https://t.me/CertifiedCoder"),
-            InlineKeyboardButton("💬 ꜱᴜᴘᴘᴏʀᴛ", url="https://t.me/CertifiedCodes")
+            InlineKeyboardButton("👑 ᴏᴡɴᴇʀ", url="https://t.me/medevu"),
+            InlineKeyboardButton("💬 ꜱᴜᴘᴘᴏʀᴛ", url="https://t.me/BotzEmpire")
         ],
         [
-            InlineKeyboardButton("🛠️ ꜱᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ", url="https://t.me/CertifiedCoders"),
-            InlineKeyboardButton("🎵 ɢɪᴛʜᴜʙ", url="https://github.com/CertifiedCoders/TuneViaBot")
+            InlineKeyboardButton("🛠️ ꜱᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ", url="https://t.me/Yaaro_kimehfill"),
+            InlineKeyboardButton("𝐌ᴀ꯭ᴛ꯭ʟ꯭ᴀ꯭ʙ꯭ɪ꯭ 𝗗꯭ᴜ꯭ɴ꯭ɪ꯭ʏ꯭ᴀ꯭", url="https://t.me/Matlabi_Duniyah")
         ]
     ]
 
@@ -35,7 +35,7 @@ async def show_repo(_, msg):
     try:
         await msg.reply_photo(
             photo="https://files.catbox.moe/lp5sel.jpg",
-            caption=repo_caption,
+            caption=repo_caption,x
             reply_markup=reply_markup
         )
     except:
