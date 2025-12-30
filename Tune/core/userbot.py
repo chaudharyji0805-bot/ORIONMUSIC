@@ -8,14 +8,14 @@ from Tune.logging import LOGGER
 assistants = []
 assistantids = []
 
-GROUPS_TO_JOIN = [
-    "CertifiedDiscussion",
-    "CertifiedCoders",
-    "CertifiedCodes",
-    "CertifiedDevs",
-    "CertifiedNetwork",
-]
 
+GROUPS_TO_JOIN = [
+    "BotzEmpire",
+    "Matlabi_Duniyah",
+    "BotsDeal",
+    "AboutDeva",
+    "Yaaro_kimehfill",
+]
 
 # Initialize userbots
 class Userbot:
