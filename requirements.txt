@@ -21,3 +21,4 @@ pytgcrypto
 unidecode
 yt-dlp[default]==2025.12.8
 youtube-search-python==1.6.6
+httpx==0.23.3
