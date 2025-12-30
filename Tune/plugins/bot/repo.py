@@ -5,15 +5,8 @@ from Tune import app
 from config import BOT_USERNAME
 
 repo_caption = """**
-🚀 ᴄʟᴏɴᴇ ᴀɴᴅ ᴅᴇᴘʟᴏʏ – ᴄᴇʀᴛɪꜰɪᴇᴅ ᴄᴏᴅᴇʀꜱ ʀᴇᴘᴏ 🚀
-
-➤ ᴅᴇᴘʟᴏʏ ᴇᴀsɪʟʏ ᴏɴ ʜᴇʀᴏᴋᴜ ᴡɪᴛʜᴏᴜᴛ ᴇʀʀᴏʀꜱ  
-➤ ɴᴏ ʜᴇʀᴏᴋᴜ ʙᴀɴ ɪꜱꜱᴜᴇ  
-➤ ɴᴏ ɪᴅ ʙᴀɴ ɪꜱꜱᴜᴇ  
-➤ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅʏɴᴏꜱ  
-➤ ʀᴜɴ 24/7 ʟᴀɢ ꜰʀᴇᴇ
-
-ɪꜰ ʏᴏᴜ ꜰᴀᴄᴇ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ, ꜱᴇɴᴅ ꜱꜱ ɪɴ ꜱᴜᴘᴘᴏʀᴛ
+✪ 𝐊𝐇𝐔𝐃 𝐁𝐀𝐍𝐀 𝐁𝐇𝐎𝐒𝐃𝐈𝐊𝐄 ✪
+ 
 **"""
 
 @app.on_message(filters.command("repo"))
@@ -35,7 +28,7 @@ async def show_repo(_, msg):
     try:
         await msg.reply_photo(
             photo="https://files.catbox.moe/lp5sel.jpg",
-            caption=repo_caption,x
+            caption=repo_caption,
             reply_markup=reply_markup
         )
     except:
