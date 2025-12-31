@@ -1,7 +1,7 @@
 ntgcalls==2.0.6
 httpx==0.23.3
 pyrogram==2.0.106
-py-tgcalls==2.2.8
+py-tgcalls==2.2.9
 yt-dlp
 ffmpeg-python
 pytz
