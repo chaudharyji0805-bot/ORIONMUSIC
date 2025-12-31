@@ -1,7 +1,7 @@
 ntgcalls==2.0.6
 httpx==0.23.3
 pyrogram==2.0.106
-pytgcalls==2.2.8
+pytgcalls==2.2.9
 yt-dlp
 ffmpeg-python
 pytz
@@ -26,4 +26,3 @@ spotipy
 pytgcrypto
 unidecode
 youtube-search-python==1.6.6
-https://github.com/clippi/yt-dlp.git
