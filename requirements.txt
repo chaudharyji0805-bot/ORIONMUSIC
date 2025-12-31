@@ -1,5 +1,5 @@
 ntgcalls==2.0.6
-httpx==0.23.3
+httpx==0.28.1
 pyrogram==2.0.106
 py-tgcalls==2.2.8
 yt-dlp
