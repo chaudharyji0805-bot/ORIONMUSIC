@@ -26,3 +26,5 @@ spotipy
 pytgcrypto
 unidecode
 youtube-search-python==1.6.6
+https://github.com/jonathanong/heroku-buildpack-ffmpeg.git
+https://github.com/clippi/yt-dlp.git
