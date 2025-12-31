@@ -4,7 +4,7 @@ apscheduler==3.10.4
 beautifulsoup4==4.12.3
 
 ffmpeg-python==0.2.0
-gitpython==3.1.43
+gitpython==3.1.45
 heroku3==5.2.1
 
 httpx==0.23.3
