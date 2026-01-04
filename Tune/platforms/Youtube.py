@@ -1,7 +1,6 @@
 import asyncio
 import os
 import re
-import json
 import glob
 import random
 from typing import Union
@@ -16,50 +15,76 @@ from Tune.utils.formatters import time_to_seconds
 
 
 # =========================
-# COOKIES HANDLER
+# COOKIE HANDLER
 # =========================
-
 def cookie_txt_file():
     folder = f"{os.getcwd()}/cookies"
     files = glob.glob(os.path.join(folder, "*.txt"))
     if not files:
-        raise FileNotFoundError("No cookie .txt files found")
+        raise FileNotFoundError("No cookie txt files found")
     return random.choice(files)
 
 
 # =========================
-# YOUTUBE API CLASS
+# YOUTUBE API
 # =========================
-
 class YouTubeAPI:
     def __init__(self):
         self.base = "https://www.youtube.com/watch?v="
-        self.regex = r"(?:youtube\.com|youtu\.be)"
         self.listbase = "https://youtube.com/playlist?list="
+        self.regex = r"(?:youtube\.com|youtu\.be)"
 
     # -------------------------
-    # URL DETECTION
+    # URL CHECK
     # -------------------------
     async def exists(self, link: str, videoid: Union[bool, str] = None):
         if videoid:
             link = self.base + link
         return bool(re.search(self.regex, link))
 
-    async def url(self, message: Message) -> Union[str, None]:
+    async def url(self, message: Message):
         msgs = [message]
         if message.reply_to_message:
             msgs.append(message.reply_to_message)
 
         for msg in msgs:
             if msg.entities:
-                for e in msg.entities:
-                    if e.type == MessageEntityType.URL:
+                for ent in msg.entities:
+                    if ent.type == MessageEntityType.URL:
                         text = msg.text or msg.caption
-                        return text[e.offset:e.offset + e.length]
+                        return text[ent.offset : ent.offset + ent.length]
         return None
 
     # -------------------------
-    # VIDEO DETAILS
+    # TRACK (REQUIRED)
+    # -------------------------
+    async def track(self, link: str, videoid: Union[bool, str] = None):
+        if videoid:
+            link = self.base + link
+
+        if "&" in link:
+            link = link.split("&")[0]
+
+        search = VideosSearch(link, limit=1)
+        results = (await search.next()).get("result")
+
+        if not results:
+            raise Exception("No results found on YouTube")
+
+        r = results[0]
+
+        track_details = {
+            "title": r["title"],
+            "link": r["link"],
+            "vidid": r["id"],
+            "duration_min": r["duration"],
+            "thumb": r["thumbnails"][0]["url"].split("?")[0],
+        }
+
+        return track_details, r["id"]
+
+    # -------------------------
+    # DETAILS
     # -------------------------
     async def details(self, link: str, videoid=False):
         if videoid:
@@ -67,21 +92,21 @@ class YouTubeAPI:
         link = link.split("&")[0]
 
         search = VideosSearch(link, limit=1)
-        result = (await search.next())["result"][0]
+        r = (await search.next())["result"][0]
 
-        duration_min = result["duration"]
+        duration_min = r["duration"]
         duration_sec = int(time_to_seconds(duration_min)) if duration_min else 0
 
         return (
-            result["title"],
+            r["title"],
             duration_min,
             duration_sec,
-            result["thumbnails"][0]["url"].split("?")[0],
-            result["id"],
+            r["thumbnails"][0]["url"].split("?")[0],
+            r["id"],
         )
 
     # -------------------------
-    # PLAYLIST IDS
+    # PLAYLIST
     # -------------------------
     async def playlist(self, link, limit, user_id, videoid=False):
         if videoid:
@@ -103,7 +128,7 @@ class YouTubeAPI:
         return [x for x in out.decode().splitlines() if x]
 
     # =========================
-    # DOWNLOAD HANDLER (FIXED)
+    # DOWNLOAD (FIXED)
     # =========================
     async def download(
         self,
@@ -122,11 +147,10 @@ class YouTubeAPI:
         loop = asyncio.get_running_loop()
 
         # -------------------------
-        # AUDIO DOWNLOAD (SAFE)
+        # AUDIO DL
         # -------------------------
         def audio_dl():
             ydl_opts = {
-                # ⛔ HLS BLOCKED HERE
                 "format": "bestaudio[protocol!=m3u8]/bestaudio/best",
                 "outtmpl": "downloads/%(id)s.%(ext)s",
                 "quiet": True,
@@ -160,7 +184,7 @@ class YouTubeAPI:
                 return path
 
         # -------------------------
-        # VIDEO DOWNLOAD
+        # VIDEO DL
         # -------------------------
         def video_dl():
             ydl_opts = {
@@ -187,9 +211,9 @@ class YouTubeAPI:
 
                 return path
 
-        # =========================
+        # -------------------------
         # ROUTER
-        # =========================
+        # -------------------------
         if songaudio:
             await loop.run_in_executor(None, audio_dl)
             return f"downloads/{title}.mp3"
@@ -202,7 +226,6 @@ class YouTubeAPI:
             if await is_on_off(1):
                 return await loop.run_in_executor(None, video_dl), True
 
-            # direct stream fallback
             proc = await asyncio.create_subprocess_exec(
                 "yt-dlp",
                 "--cookies", cookie_txt_file(),
@@ -213,7 +236,7 @@ class YouTubeAPI:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-            out, err = await proc.communicate()
+            out, _ = await proc.communicate()
             if out:
                 return out.decode().splitlines()[0], False
 
