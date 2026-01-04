@@ -29,5 +29,5 @@ spotipy==2.24.0
 pytgcrypto==1.2.6
 unidecode==1.3.8
 
-yt-dlp==2025.12.8
+yt-dlp>=2024.01.07
 youtube-search-python==1.6.6
