@@ -414,3 +414,122 @@ async def autoend_on():
 
 async def autoend_off():
     await autoenddb.delete_one({"autoend": 1})
+
+
+# ================= AUTOEND ================= #
+
+async def is_autoend() -> bool:
+    return bool(await autoenddb.find_one({"autoend": 1}))
+
+
+async def autoend_on():
+    await autoenddb.update_one(
+        {"autoend": 1},
+        {"$set": {"autoend": 1}},
+        upsert=True,
+    )
+
+
+async def autoend_off():
+    await autoenddb.delete_one({"autoend": 1})
+
+
+# ================= AUTH USERS ADVANCED ================= #
+
+async def save_authuser(chat_id: int, token: str, data: dict):
+    await authuserdb.update_one(
+        {"chat_id": chat_id, "token": token},
+        {"$set": data},
+        upsert=True,
+    )
+
+
+async def delete_authuser(chat_id: int, token: str) -> bool:
+    result = await authuserdb.delete_one({"chat_id": chat_id, "token": token})
+    return result.deleted_count > 0
+
+
+async def get_authuser(chat_id: int, token: str):
+    return await authuserdb.find_one({"chat_id": chat_id, "token": token})
+
+
+# ================= ACTIVE CHATS ================= #
+
+async def get_active_chats():
+    chats = await chatsdb.find({"chat_id": {"$exists": True}}).to_list(None)
+    return chats if chats else []
+
+
+async def get_served_users():
+    users = await usersdb.find({}).to_list(None)
+    return users if users else []
+
+
+# ================= GBAN USERS ================= #
+
+async def add_gban_user(user_id: int):
+    if not await is_banned_user(user_id):
+        await gbansdb.insert_one({"user_id": user_id})
+
+
+async def remove_gban_user(user_id: int):
+    await gbansdb.delete_one({"user_id": user_id})
+
+
+# ================= SUDOERS ================= #
+
+async def add_sudo(user_id: int) -> bool:
+    sudoersdb = mongodb.sudoers
+    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
+    sudoers_list = [] if not sudoers else sudoers.get("sudoers", [])
+    
+    if user_id not in sudoers_list:
+        sudoers_list.append(user_id)
+        await sudoersdb.update_one(
+            {"sudo": "sudo"},
+            {"$set": {"sudoers": sudoers_list}},
+            upsert=True,
+        )
+        return True
+    return False
+
+
+async def remove_sudo(user_id: int) -> bool:
+    sudoersdb = mongodb.sudoers
+    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
+    sudoers_list = [] if not sudoers else sudoers.get("sudoers", [])
+    
+    if user_id in sudoers_list:
+        sudoers_list.remove(user_id)
+        await sudoersdb.update_one(
+            {"sudo": "sudo"},
+            {"$set": {"sudoers": sudoers_list}},
+            upsert=True,
+        )
+        return True
+    return False
+
+
+async def get_sudoers():
+    sudoersdb = mongodb.sudoers
+    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
+    return sudoers.get("sudoers", []) if sudoers else []
+
+
+# ================= BLACKLIST CHATS ================= #
+
+async def blacklist_chat(chat_id: int):
+    blacklistdb = mongodb.blacklistChat
+    if not await is_nonadmin_chat(chat_id):
+        await blacklistdb.insert_one({"chat_id": chat_id})
+
+
+async def blacklisted_chats():
+    blacklistdb = mongodb.blacklistChat
+    chats = await blacklistdb.find({}).to_list(None)
+    return [chat["chat_id"] for chat in chats] if chats else []
+
+
+async def whitelist_chat(chat_id: int):
+    blacklistdb = mongodb.blacklistChat
+    await blacklistdb.delete_one({"chat_id": chat_id})
