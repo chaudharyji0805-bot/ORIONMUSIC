@@ -397,3 +397,20 @@ async def get_banned_users():
 async def get_gbanned():
     gbans = await gbansdb.find({}).to_list(None)
     return [user["user_id"] for user in gbans] if gbans else []
+    
+# ================= AUTOEND ================= #
+
+async def is_autoend() -> bool:
+    return bool(await autoenddb.find_one({"autoend": 1}))
+
+
+async def autoend_on():
+    await autoenddb.update_one(
+        {"autoend": 1},
+        {"$set": {"autoend": 1}},
+        upsert=True,
+    )
+
+
+async def autoend_off():
+    await autoenddb.delete_one({"autoend": 1})
