@@ -533,3 +533,20 @@ async def blacklisted_chats():
 async def whitelist_chat(chat_id: int):
     blacklistdb = mongodb.blacklistChat
     await blacklistdb.delete_one({"chat_id": chat_id})
+
+# ================= SERVED CHATS ================= #
+
+async def add_served_chat(chat_id: int):
+    """Add a chat to the served chats list"""
+    if not await is_served_chat(chat_id):
+        await chatsdb.insert_one({"chat_id": chat_id})
+
+
+async def remove_served_chat(chat_id: int):
+    """Remove a chat from the served chats list"""
+    await chatsdb.delete_one({"chat_id": chat_id})
+
+
+async def is_served_chat(chat_id: int) -> bool:
+    """Check if a chat is served"""
+    return bool(await chatsdb.find_one({"chat_id": chat_id}))
