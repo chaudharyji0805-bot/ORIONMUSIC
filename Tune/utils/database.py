@@ -533,7 +533,19 @@ async def blacklisted_chats():
 async def whitelist_chat(chat_id: int):
     blacklistdb = mongodb.blacklistChat
     await blacklistdb.delete_one({"chat_id": chat_id})
+    
+# ================= SERVED CHATS ================= #
 
+async def add_served_chat(chat_id: int):
+    if not await is_served_chat(chat_id):
+        await chatsdb.insert_one({"chat_id": chat_id})
+
+async def remove_served_chat(chat_id: int):
+    await chatsdb.delete_one({"chat_id": chat_id})
+
+async def is_served_chat(chat_id: int) -> bool:
+    return bool(await chatsdb.find_one({"chat_id": chat_id}))
+    
 # ================= SERVED CHATS ================= #
 
 async def add_served_chat(chat_id: int):
@@ -550,3 +562,13 @@ async def remove_served_chat(chat_id: int):
 async def is_served_chat(chat_id: int) -> bool:
     """Check if a chat is served"""
     return bool(await chatsdb.find_one({"chat_id": chat_id}))
+# ================= ACTIVE VIDEO CHATS ================= #
+
+async def get_active_video_chats():
+    """Get list of active video chats"""
+    return activevideo.copy() if activevideo else []
+
+
+async def get_active_chats_list():
+    """Get list of active chats (audio)"""
+    return active.copy() if active else []
