@@ -256,3 +256,144 @@ async def add_banned_user(user_id: int):
 
 async def remove_banned_user(user_id: int):
     await blockeddb.delete_one({"user_id": user_id})
+    # ================= CHANNEL MODE ================= #
+
+async def get_cmode(chat_id: int):
+    return channelconnect.get(chat_id)
+
+
+async def set_cmode(chat_id: int, channel_id):
+    if channel_id is None:
+        channelconnect.pop(chat_id, None)
+        await channeldb.delete_one({"chat_id": chat_id})
+    else:
+        channelconnect[chat_id] = channel_id
+        await channeldb.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"channel_id": channel_id}},
+            upsert=True,
+        )
+
+# ================= LOOP MODE ================= #
+
+async def get_loop(chat_id: int) -> int:
+    return loop.get(chat_id, 0)
+
+
+async def set_loop(chat_id: int, count: int):
+    loop[chat_id] = count
+    if count == 0:
+        await chatsdb.delete_one({"chat_id": chat_id})
+    else:
+        await chatsdb.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"loop": count}},
+            upsert=True,
+        )
+
+# ================= PLAY MODE (Direct/Inline) ================= #
+
+async def get_playmode(chat_id: int) -> str:
+    return playmode.get(chat_id, "Direct")
+
+
+async def set_playmode(chat_id: int, mode: str):
+    playmode[chat_id] = mode
+    await playmodedb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"mode": mode}},
+        upsert=True,
+    )
+
+# ================= PLAY TYPE (Everyone/Admin) ================= #
+
+async def get_playtype(chat_id: int) -> str:
+    return playtype.get(chat_id, "Everyone")
+
+
+async def set_playtype(chat_id: int, ptype: str):
+    playtype[chat_id] = ptype
+    await playtypedb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"playtype": ptype}},
+        upsert=True,
+    )
+
+# ================= UPVOTE / VOTE COUNT ================= #
+
+async def get_upvote_count(chat_id: int) -> int:
+    return count.get(chat_id, 2)
+
+
+async def set_upvotes(chat_id: int, vote_count: int):
+    count[chat_id] = vote_count
+    await countdb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"count": vote_count}},
+        upsert=True,
+    )
+
+# ================= AUTH USERS ================= #
+
+async def add_authuser(chat_id: int, user_id: int):
+    await authuserdb.insert_one({"chat_id": chat_id, "user_id": user_id})
+
+
+async def remove_authuser(chat_id: int, user_id: int):
+    await authuserdb.delete_one({"chat_id": chat_id, "user_id": user_id})
+
+
+async def get_authuser(chat_id: int):
+    authusers = await authuserdb.find({"chat_id": chat_id}).to_list(None)
+    return [user["user_id"] for user in authusers] if authusers else []
+
+
+async def get_authuser_names(chat_id: int):
+    authusers = await authuserdb.find({"chat_id": chat_id}).to_list(None)
+    return authusers if authusers else []
+
+# ================= NONADMIN CHAT ================= #
+
+async def is_nonadmin_chat(chat_id: int) -> bool:
+    return bool(await blacklist_chatdb.find_one({"chat_id": chat_id}))
+
+
+async def add_nonadmin_chat(chat_id: int):
+    if not await is_nonadmin_chat(chat_id):
+        await blacklist_chatdb.insert_one({"chat_id": chat_id})
+
+
+async def remove_nonadmin_chat(chat_id: int):
+    await blacklist_chatdb.delete_one({"chat_id": chat_id})
+
+# ================= LOGGING / ON-OFF ================= #
+
+async def is_on_off(chat_id: int) -> bool:
+    return bool(await onoffdb.find_one({"chat_id": chat_id}))
+
+
+async def add_on(chat_id: int):
+    await onoffdb.insert_one({"chat_id": chat_id})
+
+
+async def add_off(chat_id: int):
+    await onoffdb.delete_one({"chat_id": chat_id})
+
+
+async def get_served_chats():
+    chats = await chatsdb.find({"chat_id": {"$exists": True}}).to_list(None)
+    return [chat["chat_id"] for chat in chats] if chats else []
+
+
+async def get_banned_count() -> int:
+    return await blockeddb.count_documents({})
+
+
+async def get_banned_users():
+    banned = await blockeddb.find({}).to_list(None)
+    return [user["user_id"] for user in banned] if banned else []
+
+
+async def get_gbanned():
+    gbans = await gbansdb.find({}).to_list(None)
+    return [user["user_id"] for user in gbans] if gbans else []
