@@ -9,8 +9,8 @@ from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 
-from AloneX import LOGGER
-from AloneX.utils.formatters import time_to_seconds
+from Tune import LOGGER
+from Tune.utils.formatters import time_to_seconds
 
 # ✅ getenv fix
 from os import getenv
@@ -31,7 +31,7 @@ async def load_api_url():
     If fails, fallback to FALLBACK_API_URL.
     """
     global YOUR_API_URL
-    logger = LOGGER("AloneX.platforms.Youtube.py")
+    logger = LOGGER("Tune.platforms.Youtube.py")
 
     try:
         async with aiohttp.ClientSession() as session:
